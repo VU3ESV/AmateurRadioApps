@@ -143,6 +143,15 @@ macOS practically means one of:
 This collapses the three gates into a single install step (plus the Apple Developer account
 for Gate 3): the standalone app install *also* registers the extension for the Suite to host.
 
+### Proving it end-to-end
+
+[SIGNING-RUNBOOK.md](SIGNING-RUNBOOK.md) is the step-by-step to open all three gates by hand
+on a Mac with the Developer-ID identity: sign + notarize the `RadioSuiteHost` build (it embeds
+the `DemoSDR` sample) to prove hosting, then embed + sign LP-100A's `.appex` in its app to
+prove the external-app registration path. The extension entitlements this requires
+(`com.apple.security.app-sandbox`, plus `network.client` for networked plugins) are wired in
+`Xcode/Extension/*.entitlements` and `Xcode/project.yml`.
+
 ## Extension `Info.plist` (required keys)
 
 ```xml
