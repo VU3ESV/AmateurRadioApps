@@ -171,6 +171,35 @@ prove the external-app registration path. The extension entitlements this requir
 (`com.apple.security.app-sandbox`, plus `network.client` for networked plugins) are wired in
 `Xcode/Extension/*.entitlements` and `Xcode/project.yml`.
 
+## Distribution: what a user installs on another Mac
+
+**The unit of distribution is the plugin's *app*, not the `.radioplugin`.** macOS registers an
+ExtensionKit extension only when it is embedded in an **installed, launched app**, so importing a
+`.radioplugin` does *not* make a plugin runnable — that flow is discovery/catalog metadata only.
+
+To run, say, LP-100A out-of-process on a fresh Mac:
+
+1. **Install the Suite** — the **notarized `RadioSuiteHost` build** (declares the extension point +
+   hosts). The lean `swift build` DMG cannot host.
+2. **Install the plugin's app** — e.g. `LP-100A-App.app`, whose bundle **embeds the notarized
+   `.appex`** under `Contents/Extensions/` (what `scripts/package-plugin-app.sh` produces). Drag to
+   `/Applications` and **launch it once** → macOS registers the embedded extension.
+3. **Notarization is mandatory here.** On the machine that *signed* the apps, Developer-ID signing
+   alone is enough; on **any other Mac**, downloaded apps are quarantined and Gatekeeper refuses to
+   run — and refuses to register the extension of — an un-notarized app. So both the Suite and each
+   plugin app must be Developer-ID signed **and notarized + stapled**.
+4. In the Suite: **Manage Plugins → Installed → "Enable Extensions…"** → enable the plugin
+   (third-party extensions are disabled by default).
+5. Select its tab → it hosts.
+
+| | Renders the plugin? |
+|---|---|
+| Import/enable the `.radioplugin` only | ❌ no — never registered with macOS |
+| Install + launch the plugin's app (embedded, notarized extension) + enable it | ✅ yes |
+
+So the `.radioplugin`/catalog answers *"what plugins exist and where to get the app"*; installing
+the **app** is what actually delivers and registers the extension the Suite hosts.
+
 ## Extension `Info.plist` (required keys)
 
 ```xml
