@@ -34,6 +34,7 @@ targets:
       properties:
         CFBundleName: Amateur Radio Suite
         CFBundleDisplayName: Amateur Radio Suite
+        CFBundleIconFile: AppIcon          # Host/AppIcon.icns, bundled via the `Host` sources glob
         LSMinimumSystemVersion: "14.0"
         NSHighResolutionCapable: true
     settings:
