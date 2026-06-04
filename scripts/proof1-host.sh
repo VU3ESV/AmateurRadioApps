@@ -20,8 +20,10 @@ export GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0=safe.bareRepository GIT_CONFIG_VALUE_
 
 # --- Resolve the Developer ID Application identity -------------------------------------
 if [ -z "${DEV_ID:-}" ]; then
+  # Select by SHA-1 (first column), not by name: with several Developer ID certs sharing the
+  # same common name, passing the name to codesign is ambiguous and fails. Override with DEV_ID.
   DEV_ID="$(security find-identity -v -p codesigning 2>/dev/null \
-            | sed -n 's/.*"\(Developer ID Application: .*\)"/\1/p' | head -1)"
+            | awk '/Developer ID Application/ { print $2; exit }')"
 fi
 if [ -z "${DEV_ID:-}" ]; then
   echo "ERROR: no 'Developer ID Application' identity in the keychain." >&2
