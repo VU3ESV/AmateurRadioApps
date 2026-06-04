@@ -175,6 +175,18 @@ final class SuiteModel: ObservableObject {
 
     /// Reconcile after enable/disable changes: tear down plugins that are no longer
     /// active and fix the selection. Call when the manager's active set changes.
+    /// Called by the host's ExtensionKit layer when the set of installed extensions changes
+    /// (a plugin app installed/removed at runtime). Drops cached views for out-of-process
+    /// plugins so a newly-registered one flips from the placeholder to its hosted view —
+    /// then rescans and reconciles. No-op cost in the plain build (the seam is never invoked).
+    func extensionsDidChange() {
+        for entry in manager.entries where entry.isOutOfProcess {
+            cache[entry.id] = nil
+        }
+        manager.reload()
+        reconcile()
+    }
+
     func reconcile() {
         let visible = Set(manager.visibleEntries.map(\.id))
         for id in instances.keys where !visible.contains(id) {

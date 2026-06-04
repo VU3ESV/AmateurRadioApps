@@ -20,6 +20,8 @@ final class ExtensionHostProvider: OutOfProcessHostProvider {
     /// Installed matching extensions, keyed by bundle identifier.
     private var identities: [String: AppExtensionIdentity] = [:]
     private var sourceInstalled = false
+    private weak var model: SuiteModel?
+    private var observation: Task<Void, Never>?
 
     private init() {}
 
@@ -36,20 +38,34 @@ final class ExtensionHostProvider: OutOfProcessHostProvider {
     // MARK: Launch wiring (invoked from SuiteScene's .task via OutOfProcessHosting.bootstrap)
 
     func bootstrap(_ model: SuiteModel) async {
+        self.model = model
         if !sourceInstalled {
             model.manager.addSource(ExtensionPluginSource(provider: self))
             sourceInstalled = true
         }
-        await refresh()
-        model.manager.reload()
-        model.reconcile()
+        startObserving()
     }
 
-    /// Refresh the snapshot of installed matching extensions.
-    func refresh() async {
-        let found = await ExtensionDiscovery.current()
-        identities = Dictionary(found.map { ($0.bundleIdentifier, $0) },
-                                uniquingKeysWith: { first, _ in first })
+    /// Continuously observe the system's set of matching extensions. `AppExtensionIdentity.matching`
+    /// emits a fresh snapshot whenever extensions are installed/removed (and its first emission can
+    /// lag externally-installed `.appex`es), so we keep listening rather than taking one snapshot —
+    /// a plugin installed AFTER launch then flips from placeholder to hosted without a relaunch.
+    private func startObserving() {
+        observation?.cancel()
+        observation = Task { [weak self, weak model] in
+            guard let self else { return }
+            do {
+                let stream = try AppExtensionIdentity.matching(
+                    appExtensionPointIDs: RadioExtensionPoint.identifier)
+                for await found in stream {
+                    self.identities = Dictionary(found.map { ($0.bundleIdentifier, $0) },
+                                                 uniquingKeysWith: { first, _ in first })
+                    model?.extensionsDidChange()
+                }
+            } catch {
+                // Discovery unavailable — in-process plugins still work.
+            }
+        }
     }
 
     /// Discovered extensions as plugin entries (read by `ExtensionPluginSource`).

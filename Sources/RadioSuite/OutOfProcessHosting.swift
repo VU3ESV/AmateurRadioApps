@@ -29,6 +29,13 @@ enum OutOfProcessHosting {
     /// manager. Nil (no-op) under plain `swift build`.
     static var bootstrap: ((SuiteModel) async -> Void)?
 
+    /// Set by the Xcode host: opens ExtensionKit's enable/disable browser
+    /// (`EXAppExtensionBrowserViewController`). Third-party extensions are **disabled by
+    /// default** by macOS and only become hostable (returned by `AppExtensionIdentity.matching`)
+    /// once the user enables them here. Nil under plain `swift build` (the Manage-Plugins UI
+    /// hides the control when there's no host to present it).
+    static var showExtensionManager: (() -> Void)?
+
     static func canHost(_ manifest: RadioPluginManifest) -> Bool {
         provider?.canHost(manifest) ?? false
     }

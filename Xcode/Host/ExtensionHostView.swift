@@ -21,19 +21,5 @@ struct ExtensionHostView: NSViewControllerRepresentable {
     }
 }
 
-/// Discovers installed extensions that declare the suite's extension point. Feeds the
-/// `PluginManager`'s out-of-process tier (the in-process discovery reads `plugin.json`;
-/// this resolves the matching installed `.appex` identities to actually host).
-enum ExtensionDiscovery {
-    /// First snapshot of currently-installed matching extension identities.
-    static func current() async -> [AppExtensionIdentity] {
-        do {
-            let matching = try AppExtensionIdentity.matching(
-                appExtensionPointIDs: RadioExtensionPoint.identifier)
-            for await identities in matching { return identities }   // first snapshot
-        } catch {
-            // No extensions / discovery unavailable — host shows in-process plugins only.
-        }
-        return []
-    }
-}
+// Discovery of installed matching extensions is handled by `ExtensionHostProvider`, which
+// observes `AppExtensionIdentity.matching` continuously (see ExtensionHosting.swift).

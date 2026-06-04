@@ -31,6 +31,7 @@
 		B89E2CA9ECD6DE53ABED6BD3 /* RadioPluginKit in Frameworks */ = {isa = PBXBuildFile; productRef = B3B40E817E484ED5C85CCAA1 /* RadioPluginKit */; };
 		CCFB56E46A25E1CF2A625096 /* CatalogService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F3D8944063AA860B127285 /* CatalogService.swift */; };
 		E078CED102D2B53A3432DC30 /* PluginManagerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F343030F223B791F7D998FE6 /* PluginManagerView.swift */; };
+		E127A921217B5F602EDE4778 /* ExtensionManagerWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A5AAB874027879C0115E79C /* ExtensionManagerWindow.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -69,6 +70,7 @@
 		3FD5E9D2A73C3BF849A593EA /* ExtensionHosting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionHosting.swift; sourceTree = "<group>"; };
 		41D3CCA099D32A9AA4837733 /* HostShell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HostShell.swift; sourceTree = "<group>"; };
 		42EDEAE51B113A80235A3D0B /* org.vu3esv.radiosuite.plugin.appextensionpoint */ = {isa = PBXFileReference; path = org.vu3esv.radiosuite.plugin.appextensionpoint; sourceTree = "<group>"; };
+		7A5AAB874027879C0115E79C /* ExtensionManagerWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionManagerWindow.swift; sourceTree = "<group>"; };
 		96E5AEE14ADE36CAB1282C9C /* SuiteScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuiteScene.swift; sourceTree = "<group>"; };
 		9B3A3438E62FE938E2D34CC1 /* DemoSDRExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoSDRExtension.swift; sourceTree = "<group>"; };
 		9ED629199B8D9B5D48E3D189 /* HostApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HostApp.swift; sourceTree = "<group>"; };
@@ -178,6 +180,7 @@
 			children = (
 				3FD5E9D2A73C3BF849A593EA /* ExtensionHosting.swift */,
 				E1F52CD8E56C5AF379740824 /* ExtensionHostView.swift */,
+				7A5AAB874027879C0115E79C /* ExtensionManagerWindow.swift */,
 				9ED629199B8D9B5D48E3D189 /* HostApp.swift */,
 				C2452941CDC87F9E0429677D /* Info.plist */,
 				42EDEAE51B113A80235A3D0B /* org.vu3esv.radiosuite.plugin.appextensionpoint */,
@@ -322,6 +325,7 @@
 				6852E523DE3F11872B7291E6 /* CommandPaletteView.swift in Sources */,
 				3042444C9E3BF3940772BE78 /* ExtensionHostView.swift in Sources */,
 				A3AF07C593761F8B2D01AF14 /* ExtensionHosting.swift in Sources */,
+				E127A921217B5F602EDE4778 /* ExtensionManagerWindow.swift in Sources */,
 				509E631E284F8E8916095A59 /* HostApp.swift in Sources */,
 				90A6BF9CEDDB7001466B5B83 /* HostShell.swift in Sources */,
 				03995529A8F54F16657D8C2E /* OnboardingView.swift in Sources */,

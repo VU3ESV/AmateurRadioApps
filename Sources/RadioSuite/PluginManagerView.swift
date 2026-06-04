@@ -55,6 +55,12 @@ struct PluginManagerView: View {
             HStack {
                 Button { model.manager.reload() } label: { Label("Rescan", systemImage: "arrow.clockwise") }
                 Button("Install from File…") { sideload() }
+                // Out-of-process (ExtensionKit) plugins are disabled by macOS until the user
+                // enables them here. Only shown in the host build that can present the browser.
+                if let openManager = OutOfProcessHosting.showExtensionManager {
+                    Button { openManager() } label: { Label("Enable Extensions…", systemImage: "puzzlepiece.extension") }
+                        .help("Turn on installed out-of-process plugin extensions so the suite can load them.")
+                }
                 Spacer()
                 Button("Open Folder") { NSWorkspace.shared.open(InstalledPluginSource.defaultDirectory()) }
             }.padding(8)
