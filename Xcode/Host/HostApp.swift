@@ -12,6 +12,7 @@ struct HostApp: App {
         // Wire the out-of-process seam BEFORE the model is built/rendered.
         OutOfProcessHosting.provider = ExtensionHostProvider.shared
         OutOfProcessHosting.bootstrap = { await ExtensionHostProvider.shared.bootstrap($0) }
+        OutOfProcessHosting.showExtensionManager = { ExtensionManagerWindow.shared.show() }
         _model = StateObject(wrappedValue: SuiteModel())
     }
 

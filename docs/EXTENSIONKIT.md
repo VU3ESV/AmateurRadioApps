@@ -124,12 +124,24 @@ networked plugins). **Notarization is *not* required to run on the machine that 
 — a locally-built, Developer-ID-signed app registers its extension fine. Notarization + stapling
 are required only to **distribute to other Macs** (Gatekeeper clears the quarantine flag).
 
+### 5 — the user must **enable** a third-party extension (disabled by default)
+macOS **disables every newly-discovered third-party extension by default**; `AppExtensionIdentity.matching`
+returns only the ones the user has **enabled** via `EXAppExtensionBrowserViewController`. The host
+presents that browser from *Manage Plugins → Installed → "Enable Extensions…"* (see
+[`Xcode/Host/ExtensionManagerWindow.swift`](../Xcode/Host/ExtensionManagerWindow.swift)). The host's
+**own embedded** extension (DemoSDR) is auto-trusted and skips this; an **external** app's extension
+(e.g. LP-100A) shows the placeholder until enabled there. The provider observes `matching`
+continuously, so a tab flips placeholder → hosted the moment the user toggles it on.
+
+> **Verified end-to-end:** with 1–5, the suite host renders LP-100A-App's real UI out-of-process.
+
 | # | Requirement | Released DMG today | Verified fix |
 |---|-------------|--------------------|--------------|
 | 1 | Host provider present | ✗ (DMG is the SwiftPM build) | ship the **Xcode host** build |
 | 2 | Host declares the extension point | ✗ (was missing) | `…/Host/*.appextensionpoint` embedded |
 | 3 | `.appex` registered (embedded in installed app) | ✗ (browse-install only drops a folder) | embed the `.appex` in an installed, launched app |
 | 4 | Developer-ID signed + sandboxed | ✗ (ad-hoc) | sign + entitlements (notarize only to ship to others) |
+| 5 | Third-party extension enabled by the user | ✗ (no UI) | "Enable Extensions…" → `EXAppExtensionBrowserViewController` |
 
 ### What the `.radioplugin` flow actually is
 Today the browse/install flow is a **catalog / manifest-display** mechanism: it lets the Suite
