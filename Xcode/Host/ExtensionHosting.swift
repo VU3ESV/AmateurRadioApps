@@ -60,6 +60,7 @@ final class ExtensionHostProvider: OutOfProcessHostProvider {
                 for await found in stream {
                     self.identities = Dictionary(found.map { ($0.bundleIdentifier, $0) },
                                                  uniquingKeysWith: { first, _ in first })
+                    PluginIconResolver.shared.refresh()   // a plugin app may have just been installed
                     model?.extensionsDidChange()
                 }
             } catch {

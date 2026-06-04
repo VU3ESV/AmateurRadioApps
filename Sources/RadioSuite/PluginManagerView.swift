@@ -78,8 +78,8 @@ struct PluginManagerView: View {
 
     @ViewBuilder private func installedRow(_ entry: PluginEntry) -> some View {
         HStack(alignment: .top, spacing: 12) {
-            Image(systemName: entry.manifest.systemImage).font(.title2).frame(width: 28)
-                .foregroundStyle(theme.accent)
+            PluginGlyph(id: entry.manifest.id, systemImage: entry.manifest.systemImage, size: 28)
+                .font(.title2)
             VStack(alignment: .leading, spacing: 4) {
                 HStack(spacing: 8) {
                     Text(entry.manifest.name).font(.headline)
@@ -154,8 +154,8 @@ struct PluginManagerView: View {
 
     @ViewBuilder private func browseRow(_ entry: CatalogEntry) -> some View {
         HStack(alignment: .top, spacing: 12) {
-            Image(systemName: entry.systemImage ?? "puzzlepiece.extension").font(.title2).frame(width: 28)
-                .foregroundStyle(theme.accent)
+            PluginGlyph(id: entry.id, systemImage: entry.systemImage ?? "puzzlepiece.extension", size: 28)
+                .font(.title2)
             VStack(alignment: .leading, spacing: 4) {
                 HStack(spacing: 8) {
                     Text(entry.name).font(.headline)

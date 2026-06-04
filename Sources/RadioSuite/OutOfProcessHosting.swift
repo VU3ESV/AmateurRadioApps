@@ -1,4 +1,5 @@
 import SwiftUI
+import AppKit
 import RadioPluginKit
 import RadioPluginUI
 
@@ -35,6 +36,13 @@ enum OutOfProcessHosting {
     /// once the user enables them here. Nil under plain `swift build` (the Manage-Plugins UI
     /// hides the control when there's no host to present it).
     static var showExtensionManager: (() -> Void)?
+
+    /// Set by the Xcode host: maps a plugin id (its extension's bundle identifier) to the icon
+    /// of the installed app that contains that extension, so the suite shows each plugin's real
+    /// app icon. Nil under plain `swift build` — the UI then falls back to the manifest's SF
+    /// Symbol. Returns nil when the containing app isn't found (e.g. a not-yet-installed catalog
+    /// entry).
+    static var appIcon: ((String) -> NSImage?)?
 
     static func canHost(_ manifest: RadioPluginManifest) -> Bool {
         provider?.canHost(manifest) ?? false

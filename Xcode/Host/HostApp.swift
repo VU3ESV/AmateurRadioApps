@@ -13,6 +13,7 @@ struct HostApp: App {
         OutOfProcessHosting.provider = ExtensionHostProvider.shared
         OutOfProcessHosting.bootstrap = { await ExtensionHostProvider.shared.bootstrap($0) }
         OutOfProcessHosting.showExtensionManager = { ExtensionManagerWindow.shared.show() }
+        OutOfProcessHosting.appIcon = { PluginIconResolver.shared.icon(for: $0) }
         _model = StateObject(wrappedValue: SuiteModel())
     }
 

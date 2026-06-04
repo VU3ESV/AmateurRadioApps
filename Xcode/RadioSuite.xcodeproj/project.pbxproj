@@ -24,6 +24,7 @@
 		58E0E60015A44E72FD5352EF /* RadioPluginUI in Frameworks */ = {isa = PBXBuildFile; productRef = F262B734CC878C6F7EFFB8F9 /* RadioPluginUI */; };
 		5A4C30AC029B1D1C7A9025EA /* RadioPluginKit in Frameworks */ = {isa = PBXBuildFile; productRef = C16CA7B3EA68D83E92F682CF /* RadioPluginKit */; };
 		5E0D34B2632062153D6E9535 /* PluginManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26078FA8E9903DE2CCF7DB9C /* PluginManager.swift */; };
+		655E57D8853FA9D476B17429 /* PluginIconResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 373E4099EA8CBF4FF7F7C096 /* PluginIconResolver.swift */; };
 		6852E523DE3F11872B7291E6 /* CommandPaletteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E26980339DE8FA299741C6E1 /* CommandPaletteView.swift */; };
 		73239013B7D83AF81C3069BD /* PluginRegistry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3775334C66936B420097857C /* PluginRegistry.swift */; };
 		87D7D1990D34ADCDFD11736E /* DemoSDRExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B3A3438E62FE938E2D34CC1 /* DemoSDRExtension.swift */; };
@@ -33,6 +34,7 @@
 		CCFB56E46A25E1CF2A625096 /* CatalogService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F3D8944063AA860B127285 /* CatalogService.swift */; };
 		E078CED102D2B53A3432DC30 /* PluginManagerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F343030F223B791F7D998FE6 /* PluginManagerView.swift */; };
 		E127A921217B5F602EDE4778 /* ExtensionManagerWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A5AAB874027879C0115E79C /* ExtensionManagerWindow.swift */; };
+		FCB3894A83FC2DA6F03DCD93 /* PluginGlyph.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC78C2ECB28CA7F284756BCD /* PluginGlyph.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -67,6 +69,7 @@
 		28CD5CAE6674C43C7CA3471C /* DemoSDRExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.extensionkit-extension"; includeInIndex = 0; path = DemoSDRExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		2E4424695AFC01508FBC4267 /* SettingsHubView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsHubView.swift; sourceTree = "<group>"; };
 		33EF2BFC62752B86EC07D270 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		373E4099EA8CBF4FF7F7C096 /* PluginIconResolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PluginIconResolver.swift; sourceTree = "<group>"; };
 		3775334C66936B420097857C /* PluginRegistry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PluginRegistry.swift; sourceTree = "<group>"; };
 		3FD5E9D2A73C3BF849A593EA /* ExtensionHosting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionHosting.swift; sourceTree = "<group>"; };
 		41D3CCA099D32A9AA4837733 /* HostShell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HostShell.swift; sourceTree = "<group>"; };
@@ -85,6 +88,7 @@
 		E26980339DE8FA299741C6E1 /* CommandPaletteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandPaletteView.swift; sourceTree = "<group>"; };
 		E7BAE76987206B69074E2583 /* DemoSDR.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = DemoSDR.entitlements; sourceTree = "<group>"; };
 		E9F10840E3CAD10849B9C0E6 /* RadioSuiteHost.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RadioSuiteHost.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		EC78C2ECB28CA7F284756BCD /* PluginGlyph.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PluginGlyph.swift; sourceTree = "<group>"; };
 		F343030F223B791F7D998FE6 /* PluginManagerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PluginManagerView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -130,6 +134,7 @@
 				02E3A5F9400C887779C12D5A /* OutOfProcessHosting.swift */,
 				D4FB5CEF632018BD6B5AE035 /* PackageInstaller.swift */,
 				0A0E8DCA3060E8A05B5EC765 /* PluginCatalog.swift */,
+				EC78C2ECB28CA7F284756BCD /* PluginGlyph.swift */,
 				26078FA8E9903DE2CCF7DB9C /* PluginManager.swift */,
 				F343030F223B791F7D998FE6 /* PluginManagerView.swift */,
 				3775334C66936B420097857C /* PluginRegistry.swift */,
@@ -187,6 +192,7 @@
 				9ED629199B8D9B5D48E3D189 /* HostApp.swift */,
 				C2452941CDC87F9E0429677D /* Info.plist */,
 				42EDEAE51B113A80235A3D0B /* org.vu3esv.radiosuite.plugin.appextensionpoint */,
+				373E4099EA8CBF4FF7F7C096 /* PluginIconResolver.swift */,
 			);
 			path = Host;
 			sourceTree = "<group>";
@@ -336,6 +342,8 @@
 				4485FE351B1D328A57937DEB /* OutOfProcessHosting.swift in Sources */,
 				5118C193BF063441998EA784 /* PackageInstaller.swift in Sources */,
 				192F32DDFAD80904174BE6D6 /* PluginCatalog.swift in Sources */,
+				FCB3894A83FC2DA6F03DCD93 /* PluginGlyph.swift in Sources */,
+				655E57D8853FA9D476B17429 /* PluginIconResolver.swift in Sources */,
 				5E0D34B2632062153D6E9535 /* PluginManager.swift in Sources */,
 				E078CED102D2B53A3432DC30 /* PluginManagerView.swift in Sources */,
 				73239013B7D83AF81C3069BD /* PluginRegistry.swift in Sources */,
