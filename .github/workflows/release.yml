@@ -47,20 +47,22 @@ jobs:
           echo "tag=$next"            >> "$GITHUB_OUTPUT"
           echo "version=${next#v}"    >> "$GITHUB_OUTPUT"
 
-      - name: Build universal .app
+      - name: Build signed + notarized host (RadioSuiteHost) .zip and .dmg
         env:
-          APP_VERSION: ${{ steps.ver.outputs.version }}
-        run: ./build-app.sh
-
-      - name: Package .zip and .dmg
+          VERSION: ${{ steps.ver.outputs.version }}
+          # Signing/notarization secrets (see docs/SIGNING-SECRETS.md). When unset, the script
+          # falls back to ad-hoc and skips notarization — the build still succeeds, but the
+          # released Suite can't host third-party extensions on another Mac.
+          MACOS_CERT_P12_BASE64: ${{ secrets.MACOS_CERT_P12_BASE64 }}
+          MACOS_CERT_PASSWORD: ${{ secrets.MACOS_CERT_PASSWORD }}
+          KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+          NOTARY_APPLE_ID: ${{ secrets.NOTARY_APPLE_ID }}
+          NOTARY_TEAM_ID: ${{ secrets.NOTARY_TEAM_ID }}
+          NOTARY_PASSWORD: ${{ secrets.NOTARY_PASSWORD }}
         run: |
-          set -euo pipefail
-          V="${{ steps.ver.outputs.version }}"
-          APP="dist/Amateur Radio Suite.app"
-          ditto -c -k --sequesterRsrc --keepParent "$APP" "AmateurRadioSuite-$V.zip"
-          hdiutil create -volname "Amateur Radio Suite" -srcfolder "$APP" \
-            -ov -format UDZO "AmateurRadioSuite-$V.dmg"
-          ls -lh AmateurRadioSuite-"$V".zip AmateurRadioSuite-"$V".dmg
+          sudo xcode-select -s "$(ls -d /Applications/Xcode*.app | sort -V | tail -1)"
+          brew list xcodegen >/dev/null 2>&1 || brew install xcodegen
+          ./scripts/package-host-signed.sh
 
       - name: Create GitHub Release
         env:
