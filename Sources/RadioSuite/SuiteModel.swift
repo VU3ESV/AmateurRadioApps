@@ -127,6 +127,14 @@ final class SuiteModel: ObservableObject {
         manager.visibleEntries.map { Entry(id: $0.id, title: $0.manifest.name, systemImage: $0.manifest.systemImage) }
     }
 
+    /// Entries whose panes should stay in the view hierarchy (kept-alive): every plugin
+    /// activated at least once this session, plus the current selection. The host renders
+    /// these in a ZStack so an out-of-process plugin's `EXHostViewController` (and its live
+    /// connection) is not torn down when the user switches to another plugin and back.
+    var liveEntries: [Entry] {
+        entries.filter { activated.contains($0.id) || $0.id == selection }
+    }
+
     private func instance(for id: String) -> (any RadioPlugin)? {
         if let p = instances[id] { return p }
         guard let entry = manager.activeEntries.first(where: { $0.id == id }), let make = entry.make
