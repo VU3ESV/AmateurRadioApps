@@ -71,12 +71,22 @@ if [ -n "${MACOS_CERT_P12_BASE64:-}" ]; then
 fi
 
 # --- sign inside-out (extension with sandbox entitlements first, then the app) ----------
+# codesign with a few retries — Apple's secure-timestamp service is intermittently unavailable
+# ("The timestamp service is not available."), which would otherwise fail the whole release.
+cs() {
+  local n=1
+  until codesign "$@"; do
+    [ "$n" -ge 4 ] && return 1
+    echo "  codesign attempt $n failed — retrying in 15s…" >&2; sleep 15; n=$((n + 1))
+  done
+}
+
 APPEX="$APP/Contents/Extensions/$APPEX_NAME"
 if [ -n "$IDENTITY" ]; then
   echo "==> Signing with: $IDENTITY"
-  codesign --force -s "$IDENTITY" -o runtime --timestamp \
+  cs --force -s "$IDENTITY" -o runtime --timestamp \
     --entitlements "$ENTITLEMENTS" "$APPEX"
-  codesign --force -s "$IDENTITY" -o runtime --timestamp "$APP"
+  cs --force -s "$IDENTITY" -o runtime --timestamp "$APP"
 else
   echo "==> WARNING: no MACOS_CERT_P12_BASE64 — ad-hoc signing (can't host third-party extensions on other Macs)"
   codesign --force -s - --deep "$APP"
@@ -115,7 +125,7 @@ hdiutil create -volname "Amateur Radio Suite" -srcfolder "$APP" -ov -format UDZO
 # Gatekeeper prompt), then notarize + staple the DMG itself — parity with the app DMGs.
 if [ -n "$IDENTITY" ]; then
   echo "==> Codesigning the DMG"
-  codesign --force -s "$IDENTITY" --timestamp "$DMG"
+  cs --force -s "$IDENTITY" --timestamp "$DMG"
 fi
 if [ "$HAVE_NOTARY" = 1 ]; then
   echo "==> Notarizing the DMG + stapling (a few minutes)…"
