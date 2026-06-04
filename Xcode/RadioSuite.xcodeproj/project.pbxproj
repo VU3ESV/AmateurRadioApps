@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		011E108C3262D87C887F4A92 /* AppIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 60C8967A44CB7AC533E76755 /* AppIcon.icns */; };
 		03995529A8F54F16657D8C2E /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E02269DBE4F05D20E8581044 /* OnboardingView.swift */; };
 		0B5CC7AECC187631F1E96D0F /* SettingsHubView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E4424695AFC01508FBC4267 /* SettingsHubView.swift */; };
 		1760CB6D7C130875B2E0FAEE /* DemoSDRExtension.appex in Embed ExtensionKit Extensions */ = {isa = PBXBuildFile; fileRef = 28CD5CAE6674C43C7CA3471C /* DemoSDRExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -70,6 +71,7 @@
 		3FD5E9D2A73C3BF849A593EA /* ExtensionHosting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionHosting.swift; sourceTree = "<group>"; };
 		41D3CCA099D32A9AA4837733 /* HostShell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HostShell.swift; sourceTree = "<group>"; };
 		42EDEAE51B113A80235A3D0B /* org.vu3esv.radiosuite.plugin.appextensionpoint */ = {isa = PBXFileReference; path = org.vu3esv.radiosuite.plugin.appextensionpoint; sourceTree = "<group>"; };
+		60C8967A44CB7AC533E76755 /* AppIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = AppIcon.icns; sourceTree = "<group>"; };
 		7A5AAB874027879C0115E79C /* ExtensionManagerWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionManagerWindow.swift; sourceTree = "<group>"; };
 		96E5AEE14ADE36CAB1282C9C /* SuiteScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuiteScene.swift; sourceTree = "<group>"; };
 		9B3A3438E62FE938E2D34CC1 /* DemoSDRExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoSDRExtension.swift; sourceTree = "<group>"; };
@@ -178,6 +180,7 @@
 		E88672795789A77EB897A1B3 /* Host */ = {
 			isa = PBXGroup;
 			children = (
+				60C8967A44CB7AC533E76755 /* AppIcon.icns */,
 				3FD5E9D2A73C3BF849A593EA /* ExtensionHosting.swift */,
 				E1F52CD8E56C5AF379740824 /* ExtensionHostView.swift */,
 				7A5AAB874027879C0115E79C /* ExtensionManagerWindow.swift */,
@@ -280,6 +283,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				011E108C3262D87C887F4A92 /* AppIcon.icns in Resources */,
 				50EB242E7E5F0206494AEB16 /* org.vu3esv.radiosuite.plugin.appextensionpoint in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

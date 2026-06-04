@@ -53,8 +53,10 @@ config() {
 
 resolve_identity() {
   if [ -z "${DEV_ID:-}" ]; then
+    # Select by SHA-1 (first column), not by name: with several Developer ID certs sharing the
+    # same common name, passing the name to codesign is ambiguous and fails. Override with DEV_ID.
     DEV_ID="$(security find-identity -v -p codesigning 2>/dev/null \
-              | sed -n 's/.*"\(Developer ID Application: .*\)"/\1/p' | head -1)"
+              | awk '/Developer ID Application/ { print $2; exit }')"
   fi
 }
 
