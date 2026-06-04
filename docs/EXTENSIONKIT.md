@@ -83,46 +83,53 @@ on-disk `plugin.json` with the same `id` refer to the same plugin (and de-duplic
 entry → `EXHostViewController` — is complete and compiles; the project builds and embeds the
 extension with ad-hoc signing.
 
-## What it takes to actually *run* a plugin — the three gates
+## What it takes to actually *run* a plugin — the gates (verified)
 
-A common misconception is that Developer-ID signing + notarization is the only thing standing
-between an installed `.radioplugin` and a running plugin. It is **necessary but not
-sufficient**. Three independent gates must *all* be open; signing is only one of them.
+Developer-ID signing alone does **not** make a plugin appear. Four conditions must all hold —
+and the one most easily missed is #2, the host *declaring* its custom extension point.
+**Verified empirically:** with #1–#4 in place, `pluginkit` registers the embedded extension
+and the host loads it — and on the local machine this needs **no notarization** (see the note
+on #4).
 
-### Gate 1 — the Suite must be the **Xcode host** build
+### 1 — the Suite must be the **Xcode host** build
 A plugin is hostable only when `OutOfProcessHosting.provider != nil`. The released DMG is the
 plain `swift build` (SwiftPM) artifact, which **never installs a provider** — so
-`canHost(_:)` is always `false` there, regardless of how the `.appex` is signed. Only the
-`RadioSuiteHost` Xcode target installs `ExtensionHostProvider` (see
-[`Xcode/Host/ExtensionHosting.swift`](../Xcode/Host/ExtensionHosting.swift)). **A signed
-plugin still won't load in the SwiftPM/DMG build.**
+`canHost(_:)` is always `false` there. Only the `RadioSuiteHost` Xcode target installs
+`ExtensionHostProvider` (see [`Xcode/Host/ExtensionHosting.swift`](../Xcode/Host/ExtensionHosting.swift)).
 
-### Gate 2 — the `.appex` must be **registered with macOS**, not just on disk
-Discovery goes through the **system extension registry**, not the Suite's plugins folder:
+### 2 — the host must **declare the custom extension point** (the easily-missed one)
+macOS only registers extensions for a custom extension point if a **host declares that point**
+via a `<point-id>.appextensionpoint` plist embedded under `Contents/Extensions/`. Our host ships
+[`Xcode/Host/org.vu3esv.radiosuite.plugin.appextensionpoint`](../Xcode/Host/org.vu3esv.radiosuite.plugin.appextensionpoint)
+(`EXPresentsUserInterface = true`). **Without it, `AppExtensionIdentity.matching` returns
+nothing — no plugin is ever discovered, no matter how it's signed.** This was the actual cause
+of the long-standing empty plugins view.
+
+### 3 — the `.appex` must be **registered with macOS**, not just on disk
+Discovery goes through the **system extension registry**:
 
 ```swift
 AppExtensionIdentity.matching(appExtensionPointIDs: RadioExtensionPoint.identifier)
 ```
 
-The *Browse → Add Plugin from File… → Install* flow only unzips the `.appex` into
-`~/Library/Application Support/AmateurRadioSuite/Plugins/`. macOS does **not** know that
-extension exists, so `AppExtensionIdentity.matching` never returns it and
-`ExtensionHostProvider.identities[manifest.id]` stays empty. macOS registers an app extension
-only when it is **embedded inside an installed, launched container app** (under
-`Contents/Extensions/`). **A loose `.appex` in Application Support — even signed and notarized
-— is never discovered.**
+macOS registers an extension only when it is **embedded inside an installed, launched container
+app** (under `Contents/Extensions/`). The *Browse → Add Plugin from File…* flow only unzips the
+`.appex` into Application Support, which macOS never registers — so a loose `.appex` there is
+never discovered.
 
-### Gate 3 — Developer-ID signing + notarization + user approval
-Needed so macOS will *load and run* the sandboxed extension process and pass the runtime
-approval prompt. Ad-hoc signing (what the scripts/CI use) is fine for building, packaging, and
-the discovery/catalog flow — not for loading an untrusted extension. This gate does nothing
-about Gates 1 and 2.
+### 4 — the extension must be **signed (Developer ID) and sandboxed**
+The `.appex` needs a real signature (ad-hoc is rejected by the registrar) with hardened runtime,
+and the App Sandbox entitlement (`com.apple.security.app-sandbox`; plus `network.client` for
+networked plugins). **Notarization is *not* required to run on the machine that built/signed it**
+— a locally-built, Developer-ID-signed app registers its extension fine. Notarization + stapling
+are required only to **distribute to other Macs** (Gatekeeper clears the quarantine flag).
 
-| Gate | Released build today | What opens it |
-|------|----------------------|---------------|
-| 1. Host provider present | ✗ (DMG has none) | ship the Suite as the **Xcode host** build |
-| 2. Extension registered with macOS | ✗ (browse-install only drops a folder) | deliver the `.appex` **embedded in an installed app** |
-| 3. Signed + notarized + approved | ✗ (ad-hoc) | **Developer-ID + notarization** (Apple Developer account) |
+| # | Requirement | Released DMG today | Verified fix |
+|---|-------------|--------------------|--------------|
+| 1 | Host provider present | ✗ (DMG is the SwiftPM build) | ship the **Xcode host** build |
+| 2 | Host declares the extension point | ✗ (was missing) | `…/Host/*.appextensionpoint` embedded |
+| 3 | `.appex` registered (embedded in installed app) | ✗ (browse-install only drops a folder) | embed the `.appex` in an installed, launched app |
+| 4 | Developer-ID signed + sandboxed | ✗ (ad-hoc) | sign + entitlements (notarize only to ship to others) |
 
 ### What the `.radioplugin` flow actually is
 Today the browse/install flow is a **catalog / manifest-display** mechanism: it lets the Suite

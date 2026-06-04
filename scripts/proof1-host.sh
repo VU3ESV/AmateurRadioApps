@@ -8,7 +8,8 @@
 # Env (all optional — sensible defaults / auto-detection):
 #   DEV_ID   Developer ID Application identity (auto-detected from the keychain if unset)
 #   NOTARY   notarytool keychain profile name           (default: RADIO_NOTARY)
-#   SKIP_NOTARIZE=1   stop after signing (no notarization/install) — for a dry run
+#   SKIP_NOTARIZE=1   sign + install + launch but DON'T notarize — fine for running on THIS
+#                     Mac (notarization is only needed to distribute to other Macs)
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
@@ -48,24 +49,24 @@ codesign --force -s "$DEV_ID" -o runtime --timestamp \
 codesign --force -s "$DEV_ID" -o runtime --timestamp "$APP"
 codesign --verify --deep --strict --verbose=2 "$APP"
 
+# --- Notarize + staple (skip for local-only runs) --------------------------------------
 if [ "${SKIP_NOTARIZE:-0}" = "1" ]; then
-  echo "==> SKIP_NOTARIZE=1 — signed only. App at: $APP"
-  exit 0
+  echo "==> SKIP_NOTARIZE=1 — installing the signed (un-notarized) build for local use."
+else
+  if ! xcrun notarytool history --keychain-profile "$NOTARY" >/dev/null 2>&1; then
+    echo "ERROR: notary profile '$NOTARY' not found. Create it (in YOUR terminal) with:" >&2
+    echo "  xcrun notarytool store-credentials $NOTARY --apple-id <email> --team-id Y6FT52BKDA --password <app-specific-pw>" >&2
+    echo "  (or re-run with SKIP_NOTARIZE=1 to run on this Mac only)" >&2
+    exit 1
+  fi
+  echo "==> Notarizing (this can take a few minutes)…"
+  ZIP="$(mktemp -d)/RadioSuiteHost.zip"
+  ditto -c -k --keepParent "$APP" "$ZIP"
+  xcrun notarytool submit "$ZIP" --keychain-profile "$NOTARY" --wait
+  echo "==> Stapling"
+  xcrun stapler staple "$APP"
+  spctl -a -vvv -t exec "$APP" || true
 fi
-
-# --- Notarize + staple -----------------------------------------------------------------
-if ! xcrun notarytool history --keychain-profile "$NOTARY" >/dev/null 2>&1; then
-  echo "ERROR: notary profile '$NOTARY' not found. Create it (in YOUR terminal) with:" >&2
-  echo "  xcrun notarytool store-credentials $NOTARY --apple-id <email> --team-id Y6FT52BKDA --password <app-specific-pw>" >&2
-  exit 1
-fi
-echo "==> Notarizing (this can take a few minutes)…"
-ZIP="$(mktemp -d)/RadioSuiteHost.zip"
-ditto -c -k --keepParent "$APP" "$ZIP"
-xcrun notarytool submit "$ZIP" --keychain-profile "$NOTARY" --wait
-echo "==> Stapling"
-xcrun stapler staple "$APP"
-spctl -a -vvv -t exec "$APP" || true
 
 # --- Install + launch ------------------------------------------------------------------
 echo "==> Installing to /Applications and launching"
