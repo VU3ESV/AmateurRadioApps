@@ -64,7 +64,7 @@ struct HostShell: View {
             List(selection: sidebarSelection) {
                 ForEach(model.entries) { e in
                     HStack {
-                        Label(e.title, systemImage: e.systemImage)
+                        Label { Text(e.title) } icon: { PluginGlyph(id: e.id, systemImage: e.systemImage) }
                         Spacer()
                         badge(for: e.id)
                     }
@@ -92,7 +92,7 @@ struct HostShell: View {
         TabView(selection: tabSelection) {
             ForEach(model.entries) { e in
                 pane(for: e.id)
-                    .tabItem { Label(e.title, systemImage: e.systemImage) }
+                    .tabItem { Label { Text(e.title) } icon: { PluginGlyph(id: e.id, systemImage: e.systemImage) } }
                     .tag(e.id)
             }
         }
