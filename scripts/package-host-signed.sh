@@ -83,17 +83,24 @@ else
 fi
 codesign --verify --strict --verbose=2 "$APP"
 
-# --- notarize the app + staple it, so both the .zip and .dmg ship a stapled bundle ------
+# --- helper: submit to the notary service ----------------------------------------------
+notarize() {  # $1 = path to a .zip or .dmg to submit
+  xcrun notarytool submit "$1" \
+    --apple-id "$NOTARY_APPLE_ID" --team-id "${NOTARY_TEAM_ID:-}" --password "$NOTARY_PASSWORD" --wait
+}
+HAVE_NOTARY=0
 if [ -n "$IDENTITY" ] && [ -n "${NOTARY_APPLE_ID:-}" ] && [ -n "${NOTARY_PASSWORD:-}" ]; then
-  echo "==> Notarizing (a few minutes)…"
+  HAVE_NOTARY=1
+fi
+
+# Notarize the app + staple it, so both the .zip and the .dmg ship a stapled bundle that
+# launches even offline / once copied out.
+if [ "$HAVE_NOTARY" = 1 ]; then
+  echo "==> Notarizing the app + stapling (a few minutes)…"
   NZIP="$(mktemp -d)/RadioSuiteHost.zip"
   ditto -c -k --keepParent "$APP" "$NZIP"
-  xcrun notarytool submit "$NZIP" \
-    --apple-id "$NOTARY_APPLE_ID" --team-id "${NOTARY_TEAM_ID:-}" --password "$NOTARY_PASSWORD" --wait
+  notarize "$NZIP"
   xcrun stapler staple "$APP"
-  echo "==> Notarized + stapled."
-else
-  echo "==> Skipping notarization (no NOTARY_* secrets) — app signed but not notarized."
 fi
 
 # --- package the distributable .zip + .dmg from the (now stapled) app -------------------
@@ -103,5 +110,20 @@ echo "==> Packaging $ZIP and $DMG"
 rm -f "$ZIP" "$DMG"
 ditto -c -k --sequesterRsrc --keepParent "$APP" "$ZIP"
 hdiutil create -volname "Amateur Radio Suite" -srcfolder "$APP" -ov -format UDZO "$DMG"
+
+# Codesign the DMG container too (so `spctl -t open` accepts it and it mounts without a
+# Gatekeeper prompt), then notarize + staple the DMG itself — parity with the app DMGs.
+if [ -n "$IDENTITY" ]; then
+  echo "==> Codesigning the DMG"
+  codesign --force -s "$IDENTITY" --timestamp "$DMG"
+fi
+if [ "$HAVE_NOTARY" = 1 ]; then
+  echo "==> Notarizing the DMG + stapling (a few minutes)…"
+  notarize "$DMG"
+  xcrun stapler staple "$DMG"
+  echo "==> Notarized + stapled (app + DMG)."
+else
+  echo "==> Skipping notarization (no NOTARY_* secrets) — signed but not notarized."
+fi
 ls -lh "$ZIP" "$DMG"
 echo "==> Done."
