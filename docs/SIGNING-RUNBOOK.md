@@ -49,6 +49,11 @@ export GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0=safe.bareRepository GIT_CONFIG_VALUE_
 
 ## Proof 1 — the host hosts its embedded Demo SDR
 
+> **Shortcut:** [`scripts/proof1-host.sh`](../scripts/proof1-host.sh) runs 1a–1c in one go
+> (auto-detects your Developer ID, signs inside-out, notarizes via `$NOTARY`, staples,
+> installs). Dry run without notarizing: `SKIP_NOTARIZE=1 ./scripts/proof1-host.sh`.
+> The manual steps below are what it does.
+
 ### 1a. Build the host (ad-hoc), then re-sign with Developer ID
 
 ```sh

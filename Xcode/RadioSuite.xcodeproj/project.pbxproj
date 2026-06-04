@@ -18,6 +18,7 @@
 		4485FE351B1D328A57937DEB /* OutOfProcessHosting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02E3A5F9400C887779C12D5A /* OutOfProcessHosting.swift */; };
 		4A7AECB48939343A8951D004 /* SuiteModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FEFD8CE1FC53D7B27BA02A4 /* SuiteModel.swift */; };
 		509E631E284F8E8916095A59 /* HostApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9ED629199B8D9B5D48E3D189 /* HostApp.swift */; };
+		50EB242E7E5F0206494AEB16 /* org.vu3esv.radiosuite.plugin.appextensionpoint in Resources */ = {isa = PBXBuildFile; fileRef = 42EDEAE51B113A80235A3D0B /* org.vu3esv.radiosuite.plugin.appextensionpoint */; };
 		5118C193BF063441998EA784 /* PackageInstaller.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4FB5CEF632018BD6B5AE035 /* PackageInstaller.swift */; };
 		58E0E60015A44E72FD5352EF /* RadioPluginUI in Frameworks */ = {isa = PBXBuildFile; productRef = F262B734CC878C6F7EFFB8F9 /* RadioPluginUI */; };
 		5A4C30AC029B1D1C7A9025EA /* RadioPluginKit in Frameworks */ = {isa = PBXBuildFile; productRef = C16CA7B3EA68D83E92F682CF /* RadioPluginKit */; };
@@ -67,6 +68,7 @@
 		3775334C66936B420097857C /* PluginRegistry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PluginRegistry.swift; sourceTree = "<group>"; };
 		3FD5E9D2A73C3BF849A593EA /* ExtensionHosting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionHosting.swift; sourceTree = "<group>"; };
 		41D3CCA099D32A9AA4837733 /* HostShell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HostShell.swift; sourceTree = "<group>"; };
+		42EDEAE51B113A80235A3D0B /* org.vu3esv.radiosuite.plugin.appextensionpoint */ = {isa = PBXFileReference; path = org.vu3esv.radiosuite.plugin.appextensionpoint; sourceTree = "<group>"; };
 		96E5AEE14ADE36CAB1282C9C /* SuiteScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuiteScene.swift; sourceTree = "<group>"; };
 		9B3A3438E62FE938E2D34CC1 /* DemoSDRExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoSDRExtension.swift; sourceTree = "<group>"; };
 		9ED629199B8D9B5D48E3D189 /* HostApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HostApp.swift; sourceTree = "<group>"; };
@@ -178,6 +180,7 @@
 				E1F52CD8E56C5AF379740824 /* ExtensionHostView.swift */,
 				9ED629199B8D9B5D48E3D189 /* HostApp.swift */,
 				C2452941CDC87F9E0429677D /* Info.plist */,
+				42EDEAE51B113A80235A3D0B /* org.vu3esv.radiosuite.plugin.appextensionpoint */,
 			);
 			path = Host;
 			sourceTree = "<group>";
@@ -210,8 +213,10 @@
 			buildConfigurationList = B7E10A00A4F30C43A511474D /* Build configuration list for PBXNativeTarget "RadioSuiteHost" */;
 			buildPhases = (
 				BB02D9D25640F5414E56F420 /* Sources */,
+				5A7DA6D8AEE069868AD5FFCC /* Resources */,
 				01D7ECE3DFE31187DAF8D959 /* Frameworks */,
 				9441D8AE9BA2F8D126387266 /* Embed ExtensionKit Extensions */,
+				23EEDE4D2617561F058C2CAA /* Embed extension point declaration */,
 			);
 			buildRules = (
 			);
@@ -266,6 +271,39 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		5A7DA6D8AEE069868AD5FFCC /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				50EB242E7E5F0206494AEB16 /* org.vu3esv.radiosuite.plugin.appextensionpoint in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		23EEDE4D2617561F058C2CAA /* Embed extension point declaration */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Embed extension point declaration";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e\nDEST=\"$TARGET_BUILD_DIR/$CONTENTS_FOLDER_PATH/Extensions\"\nmkdir -p \"$DEST\"\ncp \"$SRCROOT/Host/org.vu3esv.radiosuite.plugin.appextensionpoint\" \"$DEST/\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		932CAD9DE197E2B34F255388 /* Sources */ = {

@@ -50,6 +50,19 @@ targets:
         product: RadioPluginUI
       - target: DemoSDRExtension
         embed: true
+    # Declare the custom ExtensionKit extension point: macOS only registers extensions for a
+    # point that a host declares via a `.appextensionpoint` plist under Contents/Extensions/.
+    # Without this, AppExtensionIdentity.matching finds nothing — the plugins never appear.
+    # (Copied post-build; our release/proof flow builds unsigned then signs the app manually,
+    # so the file is sealed by that signature.)
+    postBuildScripts:
+      - name: Embed extension point declaration
+        basedOnDependencyAnalysis: false
+        script: |
+          set -e
+          DEST="$TARGET_BUILD_DIR/$CONTENTS_FOLDER_PATH/Extensions"
+          mkdir -p "$DEST"
+          cp "$SRCROOT/Host/org.vu3esv.radiosuite.plugin.appextensionpoint" "$DEST/"
 
   DemoSDRExtension:
     type: extensionkit-extension

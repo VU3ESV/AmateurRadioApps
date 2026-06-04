@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <!-- Declares the suite's custom ExtensionKit extension point so macOS will register and
+         surface extensions implementing it (AppExtensionIdentity.matching). The host embeds
+         this file under Contents/Extensions/. Our plugins present a SwiftUI scene, so
+         EXPresentsUserInterface is true. -->
+    <key>org.vu3esv.radiosuite.plugin</key>
+    <dict>
+        <key>EXPresentsUserInterface</key>
+        <true/>
+    </dict>
+</dict>
+</plist>
