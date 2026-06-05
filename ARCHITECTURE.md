@@ -25,6 +25,14 @@ The **Amateur Radio Suite** is a single macOS container app that hosts several
 independent amateur-radio control apps as **plugins** in one window. The user
 switches between them with either a **vertical sidebar** or **horizontal tabs**.
 
+| Sidebar layout | Tabs layout |
+|---|---|
+| ![Suite in sidebar layout](docs/images/suite-sidebar.png) | ![Suite in tabs layout](docs/images/suite-tabs.png) |
+
+The chrome (window, sidebar/tab bar, banners) belongs to the host; each plugin owns only
+the content pane and renders its controls inline. The sidebar lists every loaded plugin by
+its own app icon and display name.
+
 Each radio app:
 
 - stays in **its own Git repository** and can still ship as a standalone `.app`, **and**
@@ -506,6 +514,18 @@ installed extensions (`AppExtensionIdentity`), surfaces each as a `.discovered` 
 (`EXHostViewController`). **Correlation convention:** an out-of-process plugin's `manifest.id`
 equals its extension's **bundle identifier** — the key the provider hosts by. The remaining
 gap to a *running* third-party plugin is Developer-ID signing + extension approval.
+
+Until those gates are open (or in the plain SwiftPM build, which links no hosting provider),
+a discovered out-of-process plugin is listed in the sidebar but its pane shows a placeholder
+rather than its UI:
+
+![An out-of-process plugin selected in the sidebar, showing the "runs out-of-process" placeholder](docs/images/out-of-process.png)
+
+In the Xcode host build, macOS surfaces registered extensions through its own enable/disable
+browser (`EXAppExtensionBrowserViewController`), opened from the **Manage Plugins** sheet —
+third-party extensions are disabled by default until the user turns them on here:
+
+![The macOS ExtensionKit browser listing available plugins with enable toggles](docs/images/extension-browser.png)
 
 **Build requirement:** SwiftPM **cannot** produce `.appex` bundles. An out-of-process
 plugin needs an **Xcode app-extension target** whose `Info.plist` declares the extension
