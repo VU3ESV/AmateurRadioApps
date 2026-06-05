@@ -18,9 +18,43 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  # Decide whether this event should produce a release. A merged PR (or a push to main)
+  # that ONLY changes documentation is skipped; tag pushes and manual dispatch always release.
+  gate:
+    name: Decide whether to release (skip docs-only)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      skip: ${{ steps.decide.outputs.skip }}
+    steps:
+      - id: decide
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          # This workflow only triggers on pull_request — list the PR's changed files.
+          files="$(gh api --paginate "repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files" -q '.[].filename')"
+          echo "Changed files:"; printf '  %s\n' "$files"
+          # Docs-only when EVERY changed file is markdown, under docs/, or LICENSE.
+          skip=true
+          [ -z "$files" ] && skip=false   # unknown/empty diff -> release, don't skip
+          while IFS= read -r f; do
+            [ -z "$f" ] && continue
+            case "$f" in
+              *.md|docs/*|*/docs/*|LICENSE) : ;;
+              *) skip=false; break ;;
+            esac
+          done <<< "$files"
+          echo "skip=$skip" >> "$GITHUB_OUTPUT"
+          [ "$skip" = true ] && echo "::notice::Docs-only change — skipping release."
+
   release:
+    needs: gate
     # Only on an actual merge — closing a PR without merging must not release.
-    if: github.event.pull_request.merged == true
+    # Also skip when the merge only touched docs (see the gate job).
+    if: github.event.pull_request.merged == true && needs.gate.outputs.skip != 'true'
     name: Build & publish release (macOS 14)
     runs-on: macos-14
     steps:
