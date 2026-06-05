@@ -10,6 +10,13 @@ Plugins are **discovered and installed at runtime** (browse a catalog or sideloa
 `.radioplugin`) and run **out-of-process** as sandboxed ExtensionKit extensions, so
 adding a plugin never requires rebuilding the suite.
 
+![The Amateur Radio Suite hosting the LP-700 plugin in the sidebar layout — each plugin shows its own app icon](docs/images/suite-sidebar.png)
+
+The same window switches between a **vertical sidebar** and **horizontal tabs** from the
+toolbar; each plugin renders its own controls inline (here SPE Expert's connection panel):
+
+![The suite in the horizontal tabs layout, showing the SPE Expert plugin](docs/images/suite-tabs.png)
+
 ## Plugins
 
 The suite ships with **no plugins and an empty catalog** — nothing is baked in. You populate

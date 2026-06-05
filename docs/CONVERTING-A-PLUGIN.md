@@ -389,7 +389,9 @@ load mechanism. The cleanest path to "it just works" is to **embed the `.appex` 
 own installed bundle** (`Contents/Extensions/`) so a single standalone-app install also
 registers the extension for the Xcode-host Suite to host. Until all three gates are open, an
 installed out-of-process plugin lists as **discovered** and shows the "runs out-of-process"
-placeholder.
+placeholder:
+
+![A discovered out-of-process plugin showing the "runs out-of-process" placeholder pane](images/out-of-process.png)
 
 ---
 

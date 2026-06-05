@@ -213,6 +213,11 @@ To keep third-party plugins visually coherent, ship a **design system** the SDK 
 - **Discoverability of failures:** degraded/disabled plugins are clearly marked in the sidebar with
   a one-tap path to logs and restart.
 
+The first-run onboarding card (below) orients the user to the three host affordances — the
+layout toggle, plugin management, and the command palette:
+
+![First-run onboarding card explaining the layout toggle, plugin management, and command palette](docs/images/onboarding.png)
+
 ---
 
 ## 10. Developer experience
