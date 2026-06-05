@@ -545,6 +545,47 @@ capabilities, `isolation: "out-of-process"`) **before** launching any code. See
 and the reference skeleton in
 [docs/extension-template/](https://github.com/VU3ESV/AmateurRadioSuite/tree/main/docs/extension-template).
 
+**Pane keep-alive — live state survives tab/sidebar switches.** An `EXHostViewController` owns
+a live connection to the plugin's separate process. SwiftUI's `NavigationSplitView` rebuilds
+its `detail:` on every selection change, which would dismantle the `NSViewControllerRepresentable`,
+tear down that controller, and **drop the plugin's connection and in-flight state** every time
+you switched tabs and came back. To prevent that, the host keeps every *activated* pane mounted
+and just toggles visibility:
+
+```swift
+// HostShell.swift — detail: of the NavigationSplitView (mirrored in the tab layout)
+ZStack {
+    ForEach(model.liveEntries) { e in
+        pane(for: e.id)
+            .opacity(e.id == model.selection ? 1 : 0)        // only the selection is visible
+            .allowsHitTesting(e.id == model.selection)        // …and interactive
+    }
+}
+```
+
+`liveEntries` (on `SuiteModel`) is the set of panes that must stay in the hierarchy — *every
+plugin activated at least once this session, plus the current selection*:
+
+```swift
+var liveEntries: [Entry] { entries.filter { activated.contains($0.id) || $0.id == selection } }
+```
+
+Because the pane is never removed, the hosted process — and the out-of-process plugin's
+connection — stays alive; switching away and back is instant and the plugin resumes exactly
+where it was (e.g. a connected rig stays connected). The same mechanism preserves an
+**in-process** plugin's SwiftUI `@State`. A pane is only created on first activation (lazy), so
+unopened plugins cost nothing.
+
+This is **runtime (session) persistence** and is distinct from the **durable persistence**
+covered elsewhere — they compose:
+
+| Layer | Mechanism | Survives |
+|---|---|---|
+| Runtime keep-alive | `liveEntries` + ZStack visibility toggling (§8) | tab/sidebar switches within a session — live connection + in-memory UI state |
+| Plugin state | `persistState()` / `restoreState(_:)` — §2.1, §5 | plugin restart / crash recovery |
+| Plugin settings | `host.defaults(for:)` isolated `UserDefaults` — §7.1 | app relaunch |
+| Last selection | persisted selection id restored on launch — §4 | app relaunch (reopens the last-active tab) |
+
 ---
 
 ## 9. Distribution: catalog, package & install flow
