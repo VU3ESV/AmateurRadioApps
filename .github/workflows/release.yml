@@ -35,7 +35,7 @@ jobs:
         run: |
           set -euo pipefail
           # This workflow only triggers on pull_request — list the PR's changed files.
-          files="$(gh api --paginate "repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files" -q '.[].filename')"
+          files="$(gh api --paginate "repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files" -q '.[].filename' || true)"
           echo "Changed files:"; printf '  %s\n' "$files"
           # Docs-only when EVERY changed file is markdown, under docs/, or LICENSE.
           skip=true
@@ -48,7 +48,7 @@ jobs:
             esac
           done <<< "$files"
           echo "skip=$skip" >> "$GITHUB_OUTPUT"
-          [ "$skip" = true ] && echo "::notice::Docs-only change — skipping release."
+          if [ "$skip" = true ]; then echo "::notice::Docs-only change — skipping release."; fi
 
   release:
     needs: gate
